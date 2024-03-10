@@ -2,8 +2,9 @@ import express from "express";
 import dotenv from "dotenv"
 import connectDB from "./db/index.js"
 import userRoute from "./routes/user.route.js"
+import authRoute from "./routes/auth.route.js"
 const app = express();
-
+app.use(express.json());
 process.on("uncaughtException", function (err) {
     console.log(err);
 })
@@ -24,3 +25,4 @@ connectDB()
 
 // Beacuse we define the route in another file so we use it as a middle ware and wil "use"
 app.use("/api/user", userRoute);
+app.use("/api/auth", authRoute);
