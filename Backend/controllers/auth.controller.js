@@ -1,12 +1,13 @@
 // import { response } from "express";
 import { User } from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
+import { errorHandler } from "../utils/error.js";
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password || username === "" || email === "" || password == "") {
-        return res.status(400).json({ error: "Please fill all the fields" });
+        next(errorHandler(400, "All feilds required"))
     }
     // Theres no need to await for hashing , hashSync has already await in itself
     const hashPassword = bcryptjs.hashSync(password, 10)
@@ -19,7 +20,7 @@ export const signup = async (req, res) => {
         await user.save()
         res.json("Signup successful")
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        next(error)
     }
 
 }
