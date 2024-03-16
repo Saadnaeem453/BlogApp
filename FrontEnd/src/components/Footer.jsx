@@ -4,7 +4,7 @@ import { BsFacebook, BsInstagram, BsLinkedin, BsTwitter } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 export default function FooterCom() {
     return (
-        <Footer container classname="border border-t-sky-800 border-teal-400">
+        <Footer container className="border border-t-8 border-teal-500">
             <div className='mx-auto w-full max-w-7xl'>
                 <div className='grid w-full justify-between sm:flex md:grid-cols-1'>
                     <div className='mt-5'>
