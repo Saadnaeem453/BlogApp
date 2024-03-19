@@ -3,7 +3,12 @@ import dotenv from "dotenv"
 import connectDB from "./db/index.js"
 import userRoute from "./routes/user.route.js"
 import authRoute from "./routes/auth.route.js"
+import cookieParser from "cookie-parser";
 const app = express();
+
+// Use cookie-parser middleware before defining routes
+app.use(cookieParser());
+
 app.use(express.json());
 process.on("uncaughtException", function (err) {
     console.log(err);
@@ -23,10 +28,11 @@ connectDB()
         console.log("Mongodb connection error");
     })
 
-// Beacuse we define the route in another file so we use it as a middle ware and wil "use"
+// Now, define your routes
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
-// Creatig a middleware for the error
+
+// Creating a middleware for handling errors
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500
     const message = err.message || "Internal Server Error"
@@ -34,6 +40,5 @@ app.use((err, req, res, next) => {
         success: false,
         statusCode,
         message: message,
-
     })
 })
