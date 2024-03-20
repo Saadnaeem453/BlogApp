@@ -6,7 +6,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure, deleteFailure, deleteStart, deleteSuccess } from "../redux/user/user.slice.js";
+import { updateStart, updateSuccess, updateFailure, deleteFailure, deleteStart, deleteSuccess, signoutSuccess } from "../redux/user/user.slice.js";
 import { HiOutlineExclamationCircle } from "react-icons/hi"
 
 
@@ -28,6 +28,7 @@ export default function DashProfile() {
 
     const dispatch = useDispatch();
     const filePickerRef = useRef()
+
     const handleImageChange = (e) => {
         const file = e.target.files[0]
         if (file) {
@@ -47,6 +48,7 @@ export default function DashProfile() {
         setOtherMediaUploadError(null);
         setUserUpdatedSuccess(null)
     };
+    // ProfileImage Uplaod
     useEffect(() => {
         if (image) {
             uploadImage();
@@ -75,7 +77,6 @@ export default function DashProfile() {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downlaodURL) => {
                     setImageUrl(downlaodURL)
-                    imgUploadErr(null)
                     setHideSubmitBtn(false)
 
                     setformData({ ...formData, profilePicture: downlaodURL })
@@ -160,6 +161,24 @@ export default function DashProfile() {
             }, 4000);
         }
     }
+    // Signout functionality
+    const handleSignOutUser = async () => {
+        try {
+            const res = await fetch("/api/user/signout", {
+                method: "POST"
+            })
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+            }
+            else {
+                dispatch(signoutSuccess())
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     return (
         <div className="max-w-lg mx-auto p-3 w-full">
             <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -216,7 +235,7 @@ export default function DashProfile() {
             </form>
             <div className="text-red-500  flex justify-between mt-5">
                 <span onClick={() => setShowModel(true)} className="cursor-pointer">Delete account</span>
-                <span className="cursor-pointer">Sign out</span>
+                <span onClick={() => handleSignOutUser()} className="cursor-pointer">Sign out</span>
             </div>
             {userUpdatedSuccess && (
 

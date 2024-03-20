@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom"
 import { AiOutlineSearch } from "react-icons/ai"
 import { FaMoon, FaSun } from "react-icons/fa"
 import { useSelector, useDispatch } from "react-redux"
-import { toggleTheme } from "../redux/theme/theme.slice"
+import { toggleTheme } from "../redux/theme/theme.slice.js"
+import { signoutSuccess } from "../redux/user/user.slice.js"
 export default function Header() {
     // return the current location of a React component
     const path = useLocation().pathname;
@@ -11,6 +12,24 @@ export default function Header() {
     const { currentUser } = useSelector(state => state.user)
     const { theme } = useSelector((state) => state.theme)
     console.log("path", path)
+
+
+    const handleSignOutUser = async () => {
+        try {
+            const res = await fetch("/api/user/signout", {
+                method: "POST"
+            })
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+            }
+            else {
+                dispatch(signoutSuccess())
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return (
         <Navbar>
             <Link to="/" className="whitespace-nowrap self-center text-sm sm:text-xl font-semibold dark:text-white ">
@@ -44,7 +63,7 @@ export default function Header() {
                             </Dropdown.Item>
                         </Link>
                         <Dropdown.Divider />
-                        <Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSignOutUser()}>
                             Sign out
                         </Dropdown.Item>
                     </Dropdown>
