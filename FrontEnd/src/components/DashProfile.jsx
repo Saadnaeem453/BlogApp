@@ -1,4 +1,4 @@
-import { Alert, Button, TextInput } from "flowbite-react"
+import { Alert, Button, TextInput, Modal } from "flowbite-react"
 import { useEffect, useRef, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux"
@@ -6,10 +6,13 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure } from "../redux/user/user.slice.js";
-// import { useDispatch } from "react-redux";
+import { updateStart, updateSuccess, updateFailure, deleteFailure, deleteStart, deleteSuccess } from "../redux/user/user.slice.js";
+import { HiOutlineExclamationCircle } from "react-icons/hi"
+
+
+
 export default function DashProfile() {
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser, error } = useSelector((state) => state.user);
     const [image, setImage] = useState(null)
     const [imageUrl, setImageUrl] = useState(null)
     const [imageUploadProgress, setImageUploadProgress] = useState(null)
@@ -20,9 +23,10 @@ export default function DashProfile() {
     const [hideSubmitBtn, setHideSubmitBtn] = useState(false)
     const [userUpdatedSuccess, setUserUpdatedSuccess] = useState("")
     const [userUpdatedError, setUserUpdatedError] = useState("")
+    const [showModel, setShowModel] = useState(false)
+
 
     const dispatch = useDispatch();
-    console.log(imageUploadProgress, imgUploadErr);
     const filePickerRef = useRef()
     const handleImageChange = (e) => {
         const file = e.target.files[0]
@@ -71,7 +75,7 @@ export default function DashProfile() {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downlaodURL) => {
                     setImageUrl(downlaodURL)
-
+                    imgUploadErr(null)
                     setHideSubmitBtn(false)
 
                     setformData({ ...formData, profilePicture: downlaodURL })
@@ -129,8 +133,33 @@ export default function DashProfile() {
             }, 3000);
         }
     };
+    // Delete User 
+    const handleDeleteUser = async () => {
+        setShowModel(false)
+        try {
+            dispatch(deleteStart())
+            const res = await fetch(`/api/user/delete/${currentUser._id} `, {
+                method: "DELETE",
+            })
+            const data = await res.json()
+            if (!res.ok) {
+                dispatch(deleteFailure(error.message))
+                setTimeout(() => {
+                    dispatch(deleteFailure(null))
 
-    console.log(formData);
+                }, 4000);
+            }
+            else {
+                dispatch(deleteSuccess(data))
+            }
+        } catch (error) {
+            dispatch(deleteFailure(error.message))
+            setTimeout(() => {
+                dispatch(deleteFailure(null))
+
+            }, 4000);
+        }
+    }
     return (
         <div className="max-w-lg mx-auto p-3 w-full">
             <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -186,7 +215,7 @@ export default function DashProfile() {
 
             </form>
             <div className="text-red-500  flex justify-between mt-5">
-                <span className="cursor-pointer">Delete account</span>
+                <span onClick={() => setShowModel(true)} className="cursor-pointer">Delete account</span>
                 <span className="cursor-pointer">Sign out</span>
             </div>
             {userUpdatedSuccess && (
@@ -195,13 +224,32 @@ export default function DashProfile() {
                     {userUpdatedSuccess}
                 </Alert>
             )}
+            {error && (
+
+                <Alert color="failure" className="w-full">
+                    {error}
+                </Alert>
+            )}
             {userUpdatedError && (
 
                 <Alert color="failure" className="w-full">
                     {userUpdatedError}
                 </Alert>
             )}
+            <Modal show={showModel} onClose={() => setShowModel(false)} popup size="md" >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="h-14 w-14 text-fray-400 dark:text-gray-200 mb-4 mx-auto" />
+                        <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-200 ">Are you sure you want to delete your account permanently</h3>
+                        <div className="flex justify-center gap-4">
+                            <Button color="failure" onClick={handleDeleteUser}>Yes, I am sure</Button>
+                            <Button color="gray" onClick={() => setShowModel(false)}>No, close</Button>
+                        </div>
 
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div >
     )
 }
