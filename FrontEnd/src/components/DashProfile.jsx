@@ -1,5 +1,6 @@
 import { Alert, Button, TextInput, Modal } from "flowbite-react"
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { MdCancel } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux"
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
@@ -69,6 +70,7 @@ export default function DashProfile() {
             },
             (error) => {
                 setImgUplaodErr("Couldn't Upload image(file size must be less then 2MB)")
+                console.log(imgUploadErr);
                 console.log(error);
                 setImageUploadProgress(null)
                 setImageUrl(null)
@@ -180,6 +182,7 @@ export default function DashProfile() {
     }
 
     return (
+
         <div className="max-w-lg mx-auto p-3 w-full">
             <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -230,7 +233,15 @@ export default function DashProfile() {
                 <Button type="submit" disabled={hideSubmitBtn} gradientDuoTone="purpleToBlue" outline >
                     Update
                 </Button>
+                {
+                    currentUser.isAdmin && (
+                        <Link to="/create-post">
+                            <Button type="button" className="w-full" gradientDuoTone="purpleToPink" >
+                                Create a post
+                            </Button></Link>
 
+                    )
+                }
 
             </form>
             <div className="text-red-500  flex justify-between mt-5">
@@ -270,5 +281,6 @@ export default function DashProfile() {
                 </Modal.Body>
             </Modal>
         </div >
+
     )
 }

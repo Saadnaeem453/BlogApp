@@ -36,6 +36,7 @@ export default function DashSidebar() {
         }
     }
     return (
+
         <Sidebar className="w-100 md:w-56">
             <Sidebar.Items>
                 <Sidebar.ItemGroup>
