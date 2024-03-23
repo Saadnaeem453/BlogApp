@@ -20,6 +20,7 @@ export default function DashProfile() {
     const [imgUploadErr, setImgUplaodErr] = useState(null)
     const [OtherMediaUploadError, setOtherMediaUploadError] = useState(null)
     const [imageSuccessAlert, setimageSuccessAlert] = useState(false)
+
     const [formData, setformData] = useState("")
     const [hideSubmitBtn, setHideSubmitBtn] = useState(false)
     const [userUpdatedSuccess, setUserUpdatedSuccess] = useState("")
