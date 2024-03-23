@@ -26,6 +26,5 @@ export const create = async (req, res, next) => {
             .json(savedPost)
     } catch (error) {
         next(error)
-        console.log("error");
     }
 }
