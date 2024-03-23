@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom" // ye hm is liye use kr rhy hn taky dashboard mn ye pta kr sky k hm kis tab pay hn.
-import DashSidebar from "../components/DashSidebar";
-import DashProfile from "../components/DashProfile";
+import DashSidebar from "../components/DashSidebar.jsx";
+import DashProfile from "../components/DashProfile.jsx";
+import DashPosts from "../components/DashPosts.jsx";
 
 
 export default function Dashboard() {
@@ -20,8 +21,10 @@ export default function Dashboard() {
         {/* Side bar */}
         <DashSidebar />
       </div>
-      {tab === "profile" && <DashProfile />}
       {/* profile section */}
+      {tab === "profile" && <DashProfile />}
+      {/* Dash posts */}
+      {tab === "posts" && <DashPosts />}
     </div>
   )
 }

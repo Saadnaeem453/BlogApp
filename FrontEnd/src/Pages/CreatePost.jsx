@@ -52,6 +52,7 @@ export default function CreatePost() {
                 },
                 (error) => {
                     setImgUploadErr("Couldn't upload image. Please try again later.");
+                    console.log(error);
                 },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
