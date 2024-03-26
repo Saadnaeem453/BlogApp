@@ -91,7 +91,7 @@ export default function CreatePost() {
                     content: "",
                     category: "uncategorized",
                 });
-                navigate(`/post/${data.slug}`)
+                navigate(`/dashboard?tab=profile`)
             }
         } catch (error) {
             setPublishErr("Something went wrong. Please try again later.");

@@ -3,30 +3,32 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi"
+import { FaCheck, FaTimes } from "react-icons/fa";
 
-export default function DashPosts() {
+
+export default function Dashusers() {
     const { currentUser } = useSelector((state) => state.user);
-    const [userPosts, setUserPosts] = useState([]);
-    const [visiblePosts, setVisiblePosts] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [visibleUsers, setVisibleUsers] = useState([]);
     const [showMore, setShowMore] = useState(false);
     const [showLess, setShowLess] = useState(false);
     const [showModel, setShowModel] = useState(false);
-    const [postIdDelete, setPostIdDelete] = useState("")
+    const [userIdDelete, setUserIdDelete] = useState("")
 
 
-    const postsPerPage = 9;
+    const usersPerPage = 9;
 
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchUsers = async () => {
             try {
-                const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`, {
+                const res = await fetch(`/api/user/getusers`, {
                     method: "GET"
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    setUserPosts(data.posts);
-                    setVisiblePosts(data.posts.slice(0, postsPerPage)); // Display first 9 posts initially
-                    setShowMore(data.posts.length > postsPerPage); // Show "Show more" button if there are more than 9 posts
+                    setUsers(data.users);
+                    setVisibleUsers(data.users.slice(0, usersPerPage)); // Display first 9 users initially
+                    setShowMore(data.users.length > usersPerPage); // Show "Show more" button if there are more than 9 users
                 }
             } catch (error) {
                 console.log(error.message);
@@ -34,33 +36,33 @@ export default function DashPosts() {
         };
 
         if (currentUser.isAdmin) {
-            fetchPosts();
+            fetchUsers();
         }
     }, [currentUser._id]);
 
     const handleShowMore = () => {
-        const nextIndex = visiblePosts.length + postsPerPage;
-        setVisiblePosts(userPosts.slice(0, nextIndex)); // Show next set of posts
-        setShowMore(nextIndex < userPosts.length);
+        const nextIndex = visibleUsers.length + usersPerPage;
+        setVisibleUsers(users.slice(0, nextIndex)); // Show next set of users
+        setShowMore(nextIndex < users.length);
         setShowLess(true)
-        // Show "Show more" button if there are more posts to display
+        // Show "Show more" button if there are more users to display
     };
 
     const handleShowLess = () => {
-        setVisiblePosts(userPosts.slice(0, postsPerPage)); // Show only first 9 posts
+        setVisibleUsers(users.slice(0, usersPerPage)); // Show only first 9 users
         setShowMore(true);
         setShowLess(false);// Show "Show more" button
     };
-    // Delete post=======================
+    // Delete user=======================
 
-    const handleDeletePost = async () => {
+    const handleDeleteUser = async () => {
 
-        console.log("Deleting post...");
-        console.log("Post ID to delete:", postIdDelete);
+        console.log("Deleting user...");
+        console.log("user ID to delete:", userIdDelete);
         console.log("Current user ID:", currentUser._id);
         setShowModel(false)
         try {
-            const res = await fetch(`/api/post/deletepost/${postIdDelete}/${currentUser._id}`, {
+            const res = await fetch(`/api/user/delete/${userIdDelete}`, {
                 method: "DELETE"
             }
             );
@@ -68,8 +70,8 @@ export default function DashPosts() {
             if (!res.ok) {
                 console.log(data.message);
             } else {
-                setUserPosts((prev) =>
-                    prev.filter((post) => post._id !== postIdDelete)
+                setUsers((prev) =>
+                    prev.filter((user) => user._id !== userIdDelete)
                 )
             }
         } catch (error) {
@@ -82,47 +84,53 @@ export default function DashPosts() {
 
     return (
         <div className="mb-5 table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-            {currentUser.isAdmin && visiblePosts.length > 0 ? (
+            {currentUser.isAdmin && visibleUsers.length > 0 ? (
                 <>
                     <Table hoverable className="shadow-md">
                         <Table.Head>
                             <Table.HeadCell>ID</Table.HeadCell>
-                            <Table.HeadCell>Data Updated</Table.HeadCell>
-                            <Table.HeadCell>Post Image</Table.HeadCell>
-                            <Table.HeadCell>Post Title</Table.HeadCell>
-                            <Table.HeadCell>Category</Table.HeadCell>
+
+                            <Table.HeadCell>Date Created</Table.HeadCell>
+                            <Table.HeadCell>User Image</Table.HeadCell>
+                            <Table.HeadCell>Username</Table.HeadCell>
+                            <Table.HeadCell>Email</Table.HeadCell>
+                            <Table.HeadCell>Admin</Table.HeadCell>
                             <Table.HeadCell>Delete</Table.HeadCell>
-                            <Table.HeadCell>Edit</Table.HeadCell>
+
+
                         </Table.Head>
-                        {visiblePosts.map((post, index) => (
-                            <Table.Body className="divide-y" key={post._id}>
+                        {visibleUsers.map((user, index) => (
+                            <Table.Body className="divide-y" key={user._id}>
                                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
+
+                                    <Table.Cell>{new Date(user.updatedAt).toLocaleDateString()}</Table.Cell>
+
                                     <Table.Cell>
-                                        <Link to={`/post/${post.slug}`}>
-                                            <img src={post.image} alt={post.title} className="w-20 h-10 object-cover bg-gray-500" />
+                                        <Link to={`/user/${user.slug}`}>
+                                            <img src={user.profilePicture} alt={user.title} className="w-10 h-10 object-cover bg-gray-500 rounded-full" />
                                         </Link>
                                     </Table.Cell>
+
                                     <Table.Cell>
-                                        <Link className="text-medium text-gray-900 dark:text-white" to={`/post/${post.slug}`}>
-                                            {post.title}
+                                        <Link className="text-medium text-gray-900 dark:text-white" to={`/user/${user.slug}`}>
+                                            {user.username}
                                         </Link>
                                     </Table.Cell>
-                                    <Table.Cell>{post.category}</Table.Cell>
+
+                                    <Table.Cell>{user.email}</Table.Cell>
+                                    <Table.Cell>{user.isAdmin ? <FaCheck className="text-green-500" /> : <FaTimes className="text-red-500" />}
+                                    </Table.Cell>
+
                                     <Table.Cell>
                                         <span onClick={() => {
-                                            setPostIdDelete(post._id)
+                                            setUserIdDelete(user._id)
                                             setShowModel(true);
                                         }
 
                                         } className="font-medium hover:underline cursor-pointer text-red-500">Delete</span>
                                     </Table.Cell>
-                                    <Table.Cell>
-                                        <Link className="text-teal-500 hover:underline" to={`/update-post/${post._id}`}>
-                                            Edit
-                                        </Link>
-                                    </Table.Cell>
+
                                 </Table.Row>
                             </Table.Body>
                         ))}
@@ -139,16 +147,16 @@ export default function DashPosts() {
                     )}
                 </>
             ) : (
-                <p>There are no posts!</p>
+                <p>There are no users!</p>
             )}
             <Modal show={showModel} onClose={() => setShowModel(false)} popup size="md" >
                 <Modal.Header />
                 <Modal.Body>
                     <div className="text-center">
                         <HiOutlineExclamationCircle className="h-14 w-14 text-fray-400 dark:text-gray-200 mb-4 mx-auto" />
-                        <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-200 ">Are you sure you want to delete this post permanently</h3>
+                        <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-200 ">Are you sure you want to delete this user permanently</h3>
                         <div className="flex justify-center gap-4">
-                            <Button color="failure" onClick={handleDeletePost}>Yes, I am sure</Button>
+                            <Button color="failure" onClick={handleDeleteUser}>Yes, I am sure</Button>
                             <Button color="gray" onClick={() => setShowModel(false)}>No, close</Button>
                         </div>
 
