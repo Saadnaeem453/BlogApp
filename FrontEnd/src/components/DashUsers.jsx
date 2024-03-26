@@ -56,10 +56,6 @@ export default function Dashusers() {
     // Delete user=======================
 
     const handleDeleteUser = async () => {
-
-        console.log("Deleting user...");
-        console.log("user ID to delete:", userIdDelete);
-        console.log("Current user ID:", currentUser._id);
         setShowModel(false)
         try {
             const res = await fetch(`/api/user/delete/${userIdDelete}`, {
@@ -67,12 +63,13 @@ export default function Dashusers() {
             }
             );
             const data = await res.json();
-            if (!res.ok) {
-                console.log(data.message);
-            } else {
+            if (res.ok) {
                 setUsers((prev) =>
-                    prev.filter((user) => user._id !== userIdDelete)
-                )
+
+                    prev.filter((user) => user._id !== userIdDelete))
+            } else {
+                console.log(data.message);
+
             }
         } catch (error) {
             console.log(error);
