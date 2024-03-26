@@ -26,6 +26,47 @@ export default function DashPosts() {
         }
     }, [currentUser._id]);
 
+    const handleShowMore = () => {
+        const nextIndex = visiblePosts.length + postsPerPage;
+        setVisiblePosts(userPosts.slice(0, nextIndex)); // Show next set of posts
+        setShowMore(nextIndex < userPosts.length);
+        setShowLess(true)
+        // Show "Show more" button if there are more posts to display
+    };
+
+    const handleShowLess = () => {
+        setVisiblePosts(userPosts.slice(0, postsPerPage)); // Show only first 9 posts
+        setShowMore(true);
+        setShowLess(false);// Show "Show more" button
+    };
+    // Delete post=======================
+
+    const handleDeletePost = async () => {
+        console.log("Deleting post...");
+        console.log("Post ID to delete:", postIdDelete);
+        console.log("Current user ID:", currentUser._id);
+        setShowModel(false)
+        try {
+            const res = await fetch(`/api/post/deletepost/${postIdDelete}/${currentUser._id}`, {
+                method: "DELETE"
+            }
+            );
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+            } else {
+                setUserPosts((prev) =>
+                    prev.filter((post) => post._id !== postIdDelete)
+                )
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
+
     return (
         <div className=" mb-5 table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
             {currentUser.isAdmin && userPosts.length > 0 ? (
