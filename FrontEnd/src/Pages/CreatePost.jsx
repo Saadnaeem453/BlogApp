@@ -108,9 +108,11 @@ export default function CreatePost() {
                         <option value="uncategorized">Select a category</option>
                         <option value="javascript">Javascript</option>
                         <option value="react">React Js</option>
-                        <option value="mobiledev">Mobile App Development</option>
-                        <option value="web3.0">WEB3.0</option>
+                        <option value="andriod">Andriod</option>
+                        <option value="web">Web</option>
                         <option value="blockchain">BlockChain</option>
+                        <option value="computer">Computer</option>
+                        <option value="cyber">Cyber</option>
                         <option value="technology">Technology</option>
                     </Select>
                 </div>
