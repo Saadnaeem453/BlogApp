@@ -9,3 +9,66 @@ body {
 .ql-editor {
     font-size: 1.05rem;
 }
+
+.post-content p {
+    margin-bottom: 1rem;
+    /* Increase margin for better spacing between paragraphs */
+    text-align: justify-all;
+    /* Justify text with equal spacing on both sides */
+    line-height: 1.6;
+    /* Increase line height for better readability */
+
+    font-size: 16px;
+    /* Set font size */
+    font-family: Arial, sans-serif;
+    /* Specify font family */
+}
+
+.post-content p:first-child {
+    margin-top: 0;
+    /* Remove top margin for the first paragraph */
+}
+
+.post-content p:last-child {
+    margin-bottom: 0;
+    /* Remove bottom margin for the last paragraph */
+}
+
+.post-content p strong {
+    font-weight: bold;
+    /* Make strong text bold */
+    color: #555;
+    /* Adjust color for strong text */
+}
+
+.post-content p em {
+    font-style: italic;
+    /* Make emphasized text italic */
+}
+
+.post-content h1 {
+    font-family: sans-serif;
+    margin: 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.post-content h2 {
+    font-family: sans-serif;
+    margin: 1.5rem 0;
+    font-size: 1.4em;
+}
+
+.post-content a {
+    color: rgb(73, 149, 199);
+    text-decoration: none;
+}
+
+.post-content a:hover {
+    text-decoration: underline;
+}
+
+.dark .post-content a {
+    color: rgb(196, 119, 119);
+    text-decoration: none;
+}
