@@ -20,6 +20,10 @@ const postSchemea = new mongoose.Schema({
     },
     category: {
         type: String,
+        /* The `default: "Technology"` property in the `category` field of the mongoose schema is setting a
+        default value of "Technology" for the `category` field if no value is provided when creating a
+        new document. */
+
         required: true,
         unique: true
     },
