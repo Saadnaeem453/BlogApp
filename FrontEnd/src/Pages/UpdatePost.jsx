@@ -100,7 +100,6 @@ export default function UpdatePost() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("jnb");
         try {
 
             const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {

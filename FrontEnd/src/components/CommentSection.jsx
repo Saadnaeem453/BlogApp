@@ -1,13 +1,15 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 import { Textarea, Button, Alert } from "flowbite-react";
-
+import Comment from "./Comment.jsx"
 export default function CommentSection({ postId }) {
     const [comment, setComment] = useState("");
     const [commentErr, setCommentErr] = useState("");
     const { currentUser } = useSelector((state) => state.user);
+    const [comments, setComments] = useState([]);
+    console.log(comments);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,9 +23,11 @@ export default function CommentSection({ postId }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ content: comment, userId: currentUser._id, postId })
             });
+            const data = await res.json();
             if (res.ok) {
                 setComment("");
                 setCommentErr("");
+                setComments([data, ...comments])
             } else {
                 // Handle other HTTP status codes if needed
                 setCommentErr("Failed to submit comment. Please try again later.");
@@ -32,7 +36,22 @@ export default function CommentSection({ postId }) {
             setCommentErr("An error occurred while submitting the comment.");
         }
     };
+    useEffect(() => {
+        const getComments = async () => {
+            try {
+                const res = await fetch(`/api/comment/getPostComments/${postId}`)
+                const data = await res.json();
 
+                if (res.ok) {
+                    setComments(data)
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getComments()
+    }, [postId])
     return (
         <div className="max-w-2xl mx-auto w-full p-3">
             {currentUser ? (
@@ -59,10 +78,30 @@ export default function CommentSection({ postId }) {
                             <p className="text-gray-500 text-sm">{200 - comment.length} remaining characters</p>
                             <Button type="submit" outline gradientDuoTone="purpleToBlue">Comment</Button>
                         </div>
+                        {commentErr && (
+                            <Alert className="mt-5" color="failure">{commentErr}</Alert>
+                        )}
                     </form>
-                    {commentErr && (
-                        <Alert className="mt-5" color="failure">{commentErr}</Alert>
+                    {comments.length === 0 ? (
+                        <p className="text-sm my-5 ">No comments yet!</p>
+                    ) : (
+                        <>
+                            <div className="text-sm my-5 flex items-center gap-1 ">
+                                <p>Comments</p>
+                                <div className="border border-gray py-1 px-2 rounded-sm">
+                                    {comments.length}
+                                </div>
+                            </div>
+                            {comments.map((comment) => (
+                                <Comment
+                                    key={comment._id}
+                                    comment={comment} />
+
+                            ))}
+                        </>
+
                     )}
+
                 </>
             )}
         </div>

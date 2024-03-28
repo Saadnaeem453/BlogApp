@@ -131,7 +131,6 @@ export default function DashProfile() {
             }
         } catch (error) {
             dispatch(updateFailure(error.message));
-            setUserUpdatedError(error.message);
             setTimeout(() => {
                 setUserUpdatedError(null);
             }, 3000);
@@ -255,12 +254,12 @@ export default function DashProfile() {
                     {userUpdatedSuccess}
                 </Alert>
             )}
-            {error && (
+            {/* {error && (
 
                 <Alert color="failure" className="w-full">
                     {error}
                 </Alert>
-            )}
+            )} */}
             {userUpdatedError && (
 
                 <Alert color="failure" className="w-full">

@@ -18,6 +18,8 @@ export default function DashPosts() {
 
     useEffect(() => {
         const fetchPosts = async () => {
+            console.log("data");
+
             try {
                 const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`, {
                     method: "GET"
@@ -28,8 +30,12 @@ export default function DashPosts() {
                     setVisiblePosts(data.posts.slice(0, postsPerPage)); // Display first 9 posts initially
                     setShowMore(data.posts.length > postsPerPage); // Show "Show more" button if there are more than 9 posts
                 }
+                if (!res.ok) {
+                    console.log("ni thk response");
+                }
             } catch (error) {
                 console.log(error.message);
+                console.log("jnb");
             }
         };
 
